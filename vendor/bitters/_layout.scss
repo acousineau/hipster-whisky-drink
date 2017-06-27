@@ -1,0 +1,221 @@
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+// Breakpoint Lookup Function
+@function bp($bp) {
+  @return map-get($breakpoints, $bp);
+}
+
+// Define a Responsive Breakpoint
+@mixin breakpoint($min: 0, $max: 9999px) {
+  @media (min-width: #{$min}) and (max-width: #{$max}) {
+    @content;
+  }
+}
+
+// Define a Responsive Breakpoint from $min up
+@mixin breakpoint-min($min) {
+  @include breakpoint(($min + 1)) {
+    @content;
+  }
+}
+
+// Define a Responsive Breakpoint from 0 to $max
+@mixin breakpoint-max($max) {
+  @include breakpoint(0, $max) {
+    @content;
+  }
+}
+
+@each $margin-padding, $mp in ('margin' 'l-m') ('padding' 'l-p') {
+  @each $direction, $d, $hv in ('top' 't' 'v') ('left' 'l' 'h') ('bottom' 'b' 'v') ('right' 'r' 'h') {
+    @each $size, $s in
+      (0 'n')
+      ($space-1 '1')
+      ($space-2 '2')
+      ($space-3 '3')
+      ($space-4 '4')
+      ($space-5 '5')
+      ($space-6 '6') {
+      .#{$mp}#{$d}#{$s},
+      .#{$mp}#{$hv}#{$s},
+      .#{$mp}a#{$s} {
+        #{$margin-padding}-#{$direction}: #{$size};
+      }
+    }
+  }
+}
+
+// TODO: Add responsive spacing utils to styleguide
+@include breakpoint-max(bp(large)) {
+  @each $margin-padding, $mp in ('margin' 'l-lg-m') ('padding' 'l-lg-p') {
+    @each $direction, $d, $hv in ('top' 't' 'v') ('left' 'l' 'h') ('bottom' 'b' 'v') ('right' 'r' 'h') {
+      @each $size, $s in
+        (0 'n')
+        ($space-1 '1')
+        ($space-2 '2')
+        ($space-3 '3')
+        ($space-4 '4')
+        ($space-5 '5')
+        ($space-6 '6') {
+        .#{$mp}#{$d}#{$s}, .#{$mp}#{$hv}#{$s}, .#{$mp}a#{$s} {
+          #{$margin-padding}-#{$direction}: #{$size};
+        }
+      }
+    }
+  }
+}
+
+@include breakpoint-max(bp(medium)) {
+  @each $margin-padding, $mp in ('margin' 'l-md-m') ('padding' 'l-md-p') {
+    @each $direction, $d, $hv in ('top' 't' 'v') ('left' 'l' 'h') ('bottom' 'b' 'v') ('right' 'r' 'h') {
+      @each $size, $s in
+        (0 'n')
+        ($space-1 '1')
+        ($space-2 '2')
+        ($space-3 '3')
+        ($space-4 '4')
+        ($space-5 '5')
+        ($space-6 '6') {
+        .#{$mp}#{$d}#{$s}, .#{$mp}#{$hv}#{$s}, .#{$mp}a#{$s} {
+          #{$margin-padding}-#{$direction}: #{$size};
+        }
+      }
+    }
+  }
+}
+
+@include breakpoint-max(bp(small)) {
+  @each $margin-padding, $mp in ('margin' 'l-sm-m') ('padding' 'l-sm-p') {
+    @each $direction, $d, $hv in ('top' 't' 'v') ('left' 'l' 'h') ('bottom' 'b' 'v') ('right' 'r' 'h') {
+      @each $size, $s in
+        (0 'n')
+        ($space-1 '1')
+        ($space-2 '2')
+        ($space-3 '3')
+        ($space-4 '4')
+        ($space-5 '5')
+        ($space-6 '6') {
+        .#{$mp}#{$d}#{$s}, .#{$mp}#{$hv}#{$s}, .#{$mp}a#{$s} {
+          #{$margin-padding}-#{$direction}: #{$size};
+        }
+      }
+    }
+  }
+}
+
+// Grid System
+.l-grid {
+  max-width: bp(max);
+  margin: auto;
+  padding-left: $gutter;
+  padding-right: $gutter;
+
+  @include breakpoint-max(1280px) {
+    margin-left: $space-4;
+    margin-right: $space-4;
+  }
+
+  @include breakpoint-max(bp(small)) {
+    margin-left: rem(13px);
+    margin-right: rem(13px);
+  }
+}
+
+.l-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-left: -$gutter;
+  margin-right: -$gutter;
+
+  &.vertical-center {
+    align-items: center;
+
+    @include breakpoint-max(bp(small)) {
+      align-items: stretch;
+    }
+  }
+
+  &.horizontal-center {
+    justify-content: center;
+  }
+
+  // Basic Column Definitions
+  > * {
+    flex: 0 0 auto;
+    padding-right: $gutter;
+    padding-left: $gutter;
+
+    // Comment about in Playbook
+    &.fill-height {
+      display: flex;
+      justify-content: center;
+
+      > * {
+        width: 100%;
+      }
+    }
+
+    @include breakpoint-max(bp(small)) {
+      flex-basis: 100% !important;
+      max-width: 100% !important;
+    }
+  }
+}
+
+@mixin flex-basis($i, $viewport: 'not-small') {
+  @if ($viewport == 'small') {
+    flex-basis: ($i / 12) * 100% !important;
+    max-width: ($i / 12) * 100% !important;
+  } @else {
+    flex-basis: ($i / 12) * 100%;
+    max-width: ($i / 12) * 100%;
+  }
+}
+
+@for $i from 1 through 12 {
+  .l-col-#{$i} {
+    @include flex-basis($i);
+  }
+}
+
+@include breakpoint-max(bp(large)) {
+  @for $i from 1 through 12 {
+    .l-col-lg-#{$i} {
+      @include flex-basis($i);
+    }
+  }
+}
+
+@include breakpoint-max(bp(medium)) {
+  @for $i from 1 through 12 {
+    .l-col-md-#{$i} {
+      @include flex-basis($i);
+    }
+  }
+}
+
+@include breakpoint-max(bp(small)) {
+  @for $i from 1 through 12 {
+    .l-col-sm-#{$i} {
+      @include flex-basis($i, 'small');
+    }
+  }
+}
